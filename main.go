@@ -30,7 +30,15 @@ func NewStaticService(port string) *restful.WebService {
 
 	//service.Route(service.POST(facebookCallback).To(FacebookCallback))
 	service.Route(service.GET(posts).To(Posts))
+	service.Filter(enableCORS)
 	return service
+}
+
+func enableCORS(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
+	if origin := req.Request.Header.Get("Origin"); origin != "" {
+		resp.AddHeader("Access-Control-Allow-Origin", origin)
+	}
+	chain.ProcessFilter(req, resp)
 }
 
 type test struct{ t string }
